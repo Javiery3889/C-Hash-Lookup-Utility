@@ -9,9 +9,9 @@
 void starttime();
 void endtime();
 void words(FILE * filename);
+
 int main(int argc, char const *argv[]){
-	
-	starttime();
+
 	char filename[256];
 	int returnvalue;
 	strcpy(filename,argv[1]);
@@ -23,11 +23,15 @@ int main(int argc, char const *argv[]){
 	if(file == NULL){
 		printf("Fatal error! %s not found\n ", argv[1]);
 	}
+	 else if (num2 > num3){
+		printf("Usage : ./task1 <wordlist> <min> <max>\n\t<wordlist> : A file path/name in which contains the password dictionary\n\t<min> : An integer value greater than 1.\n\t\tThis value represents the minimum length of the password\n\t<max> : An integer value greater than or equal to <min>.\n\t\t<max> represents the maximum length of the password.\n");
+	}
 	else{
+		starttime();
 		words(file);
+		endtime();
 	}
 
-	endtime();
 	return 0;
 }
 
