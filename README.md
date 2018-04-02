@@ -24,6 +24,6 @@
   > Execution time: 3-5mins depending on computing power, pyc3 password could not be found as the hash length does not equal to 90 characters.
   
  * Possible improvements/features
-   * add a function to check if the user's password hash is md5 or sha-512, filtering out the number hashes in mytab2411.txt to reduce lookup time.
+   * Add a function to check if the user's password hash is md5 or sha-512, filtering out the number hashes in mytab2411.txt to reduce lookup time.
    * Add multithreading to enable reduce wait time when executing the program.
   
