@@ -1,6 +1,6 @@
 # C Assignment
 
-# Task 1 (Hash lookup generator)
+# Task 1 (Hash lookup wordlist generator)
 * This program takes in 3 parameters: wordlist filename, a integer representing the minimum length of the password and another integer representing the maximum length of the password.
 * This program uses the crypt.h library and its functions to create a simple MD5 and SHA-512 hash from a password in the wordlist file (specified on the command line).
 * Afterwards, the program writes the two respective hashes of the password into mytab2411.txt.
@@ -12,4 +12,9 @@
 * Possible improvements/features
   * Add multithreading to enable reduce wait time when executing the program.
   * Error handling of wordlist file (e.g check to see if the file is a .txt file)
-
+  
+# Task 2 (Password Lookup Program)
+* This program takes in 2 parameters, 2 files to be exact: first argument is for the location of the file with the username and the digest of the respective user's password (similar to /etc/shadow file in linux systems). The second file will be the lookup table we will be using containing all the possible password and hash pair. (we will be using mytab2411.txt as the lookup table)
+* This program compares each user's password hash with each hash in mytab2411.txt until EOF. The program also checks if the user's password digest is valid by checking the digest length.
+  # Demo (Task 2)
+  
