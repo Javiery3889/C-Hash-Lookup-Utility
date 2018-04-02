@@ -5,4 +5,5 @@
 * This program uses the crypt.h library and its functions to create a simple MD5 and SHA-512 hash from a password in the wordlist file (specified on the command line).
 * Afterwards, the program writes the two respective hashes of the password into mytab2411.txt.
   # Demo (Task 1)
+  ![Compiling and Executing task1](https://github.com/Javiery3889/C-Hash-Lookup-Utility/blob/master/images/task1a_3151_6682.jpg)
 
