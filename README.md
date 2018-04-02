@@ -7,7 +7,8 @@
   # Demo (Task 1)
   ![Compiling and Executing task1](https://github.com/Javiery3889/C-Hash-Lookup-Utility/blob/master/images/task1a_3151_6682.jpg)
   > Execution time: 3-5mins depending on computing power (using wordlist.txt)
-  \ ![Snippet of mytab2411.txt](https://github.com/Javiery3889/C-Hash-Lookup-Utility/blob/master/images/task1b_3151_6682.jpg)
+  
+![Snippet of mytab2411.txt](https://github.com/Javiery3889/C-Hash-Lookup-Utility/blob/master/images/task1b_3151_6682.jpg)
 * Possible improvements/features
   * Add multithreading to enable reduce wait time when executing the program.
   * Error handling of wordlist file (e.g check to see if the file is a .txt file)
