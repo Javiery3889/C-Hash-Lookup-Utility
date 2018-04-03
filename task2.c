@@ -4,7 +4,7 @@ Passowrd recovery tool by comparing hashes of users with the help of a wordlist 
 Author: Javier Yong 1726682 DISM/1A/21
         Ng Jun Xiang 1703151 DISM/1A/21
 Last Updated: 23/12/2017
-Estimated runtime: 4-10mins
+Estimated runtime: 4-10mins depending on computer's processing power
 */
 #include <stdio.h>
 #include <stdlib.h> //malloc, free
@@ -18,7 +18,7 @@ Linked lists allows the program to insert and remove elements without reallocati
 arrays
 */
 
-//linked list used for shadow.txt file
+//A node struct used for shadow.txt file linked list management
 struct shadow{
   //data for each node containing the uesr and hash in shadow file e.g usr=py1, hsh=to the hash that represent the user pyc1
   char *usr;
@@ -27,7 +27,7 @@ struct shadow{
 };
 typedef struct shadow sha;
 
-//linked list used for mytab2411.txt file
+//A node struct used for mytab2411.txt file linked list management
 struct wordlist{
   // data for each node containing the password and hash of the corresponding password in mytab21411.txt
   char *password;
@@ -56,6 +56,12 @@ int main(int argc, char const *argv[]){
   //declare two char array variables, shadowfilename and wordlistfilename, to store input from the two arguments in the command line. 
   char shadowfilename[MAXSIZE];
   char wordlistfilename[MAXSIZE];
+  if(argc != 3){
+    printf("Usage : ./task1 <shadowfile> <mytab2411.txt>\n\t<shadowfile>: A file path/name containing user and password hash pair\n\t<mytab2411.txt> : A file path/name containing all the possible words and hash pairs\n");
+    endtime();
+    exit(-1);
+  }
+
   strcpy(shadowfilename,argv[1]); //strcpy function copies the string from argument 1 in command line to char array varaible shadowfilename
   strcpy(wordlistfilename,argv[2]);
 
@@ -86,12 +92,13 @@ int main(int argc, char const *argv[]){
   }
 
   else{ //else if both files are not NULL
+    //shadow.txt linked list management
     // declare two char pointers instead of char arrays as the length of string might vary
     char *user;
     char *hash;
 
     const char s[2] = ":"; //used later in strtok
-    char str[MAXSIZE]; //str array declared to store each line of data in the file 
+    char str[MAXSIZE]; //str array declared to store each line of data in shadow.txt 
     sha* headoflinkedlist = NULL; //initializing an empty list to store contents of shadow file 
 
     //while loop used to traverse until end of shadow.txt file 
@@ -108,8 +115,8 @@ int main(int argc, char const *argv[]){
     //these two char pointers will store the password and corresponding hash of password from str2
     char *pw;
     char *hash2;  
-    word* headofwordlist = NULL; //initialize an empty list to store contents of wordlist file 
-    char str2[MAXSIZE];
+    word* headofwordlist = NULL; //initialize an empty list to store contents of mytab2411.txt 
+    char str2[MAXSIZE]; //store each line of mytab2411.txt in str2
 
     while(EOF != fscanf(fp2,"%[^\n]\n", str2)){ 
         pw = strtok(str2,s); //store password string into pw variable by separating str2 using strtok 
@@ -157,10 +164,11 @@ void endtime(){
 }
 
 /*
-appendlinkedlist function creates and append the node to the tail of the linked list called sha. 
+appendlinkedlist function creates and append the node to the tail of the linked list called sha. Each node contains the username and 
+password hash found in shadow.txt 
 if the sha is empty, it will set the head of the linked list to the first node that is created.
 This function takes in a reference (pointer to pointer) to the head
-of the linked list, sha, and the char pointer of both user and hash in shadow file 
+of the linked list, sha, and the char pointer of both user and hash that have been initialized in main function
 */
 void appendlinkedlist(sha** head_ref, char *user, char *hash){
     //1. allocate memory to new_node
@@ -187,17 +195,18 @@ void appendlinkedlist(sha** head_ref, char *user, char *hash){
        while (lastnode->nextnode != NULL){
         lastnode = lastnode->nextnode;
       }
-    /* 6. Change the nextnode of last node */
+    /* 6. Append the nextnode of last node, this effectivly makes new_node the new tail of linkedlist */
       lastnode->nextnode = new_node;
       return;
   }
 } //end of appendlinkedlist function
 
 /*
-appendwordlist function creates and append the node to the tail of the linked list called word. 
-if the word is empty, it will set the head of the linked list to the first node that is created.
+appendwordlist function creates and append the node to the tail of the linked list called word. Each node contains the dictionary word and 
+ the corresponding hash of the word found in mytab2411.txt.
+if word is empty, it will set the head of the linked list to the first node that is created.
 This function takes in a reference (pointer to pointer) to the head
-of the linked list, sha, and the char pointer of both password and hash in shadow file 
+of the linked list, word, and the char pointer of both password and hash read that have been initialized in main function
 */
 void appendwordlist(word** head_ref,char *password,char *hash){
     /* 1. allocate memory to new_node */
@@ -224,7 +233,7 @@ void appendwordlist(word** head_ref,char *password,char *hash){
       while (lastword->nextword != NULL){
           lastword = lastword->nextword;
        }
-    /* 6. Change the nextword of last node */
+    /* 6. Append the nextword of last node, this effectivly makes new_node the new tail of wordlist */
        lastword->nextword = new_node;
        return;
    } 
@@ -238,41 +247,38 @@ and the hash of each password in wordlist if the two values match.
 void comparehash(sha *linkedlist,word *wordlist){
 
   int returnvalue; //used later in strcmp function
-  int hashlen; //represent the length of the hash that is stored in the shadow file which correspond to eaach user
+  int hashlen; //represent the length of the hash that is stored in the shadow file which correspond to each user
 
-  word *tmp = wordlist; //create a tmp variable that contains all passwords and hashes in mytab2411.txt, as we do not want to modify the wordlist variable itself
+  word *tmp = wordlist; //create a tmp variable that contains all nodes in wordlist linked list, as we do not want to modify the wordlist variable itself
 
   while(linkedlist != NULL){ //while loop used to iterate linkedlist until the last user of linkedlist
     hashlen = strlen(linkedlist->hsh); //calculate length of hash using strlen
     returnvalue = strcmp(linkedlist->hsh,tmp->hashofpw); //we are comparing the hash of the user in linkedlist and the hash of the corresponding password in wordlist
-
-    if(returnvalue == 0){ //strcmp returns 0 only if both strings match, in this case if hash of user matches hash of password
-      printf("user id : %s - password found => %s\n", linkedlist->usr,tmp->password); //prints the user and password of that user
-      linkedlist = linkedlist->nextnode; //goes to next user 
-      tmp = wordlist; //resets tmp pointer back to the head of wordlist
-    }
-    else{
-      tmp = tmp->nextword; //traverse to next password
-      if(tmp == NULL){ //after traversing to the next password, check if password exist or not
-        if(hashlen != 26 && hashlen != 90){ //if hash is of invalid length
+    if(hashlen != 26 && hashlen != 90){ //if hash is of invalid length
           printf("Invalid entry found in shadow file.(skipped)\n");
-          tmp = wordlist; //resets tmp pointer back to the head of wordlist
           linkedlist = linkedlist->nextnode; //goes to next user
-         } 
-        else{
+     }
+    else{  
+      if(returnvalue == 0){ //strcmp returns 0 only if both strings match, in this case if hash of user matches hash of password
+        printf("user id : %s - password found => %s\n", linkedlist->usr,tmp->password); //prints the user and password of that user
+        linkedlist = linkedlist->nextnode; //goes to next user 
+        tmp = wordlist; //resets tmp pointer back to the head of wordlist
+      }
+      else{
+        tmp = tmp->nextword; //traverse to next password
+        if(tmp == NULL){ //if we traverse to the end of tmp linked list there is still no match of hashes 
           printf("user id : %s - password <NOT FOUND>\n", linkedlist->usr);
           tmp = wordlist; //resets tmp pointer back to the head of wordlist
           linkedlist = linkedlist->nextnode; //goes to next user
-        }//end of inner-else statement
-      } 
+        } 
+      }
     } //end of outer-else statement
   } //end of while-loop
 } //end of comparehash function 
 
 /* freeLinkedList deallocates memory that was previously allocated by the malloc call in 
-appendlinkedlist. It takes it the head pointer of the linked list that is called sha.
+appendlinkedlist. It takes it the head pointer of the linked list contianing the user and hashed password in shadow.txt.
 */
-
 void freeLinkedList(sha* head){
    sha* tmp;
 
@@ -281,13 +287,11 @@ void freeLinkedList(sha* head){
        head = head->nextnode; //re-initialize head to be equal to next node until nextnode == NULL
        free(tmp); //realease node 
     }
-
 }
 
 /* freeWordList deallocates memory that was previously allocated by the malloc call in 
-appendwordlist. It takes it the head pointer of the linked list that is called word.
+appendwordlist. It takes it the head pointer of the linked list containing the password and corresponding hash in mytab2411.txt.
 */
-
 void freeWordList(word* head){
    word* tmp;
    while (head != NULL){
@@ -295,7 +299,6 @@ void freeWordList(word* head){
        head = head->nextword;
        free(tmp);
     }
-
 }
 
 /*
